@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Math Knowledge Check</title>
+
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Lxbozoxgoguardian/let-s-blow-this-shit-up/refs/heads/main/123.ico">
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .secret-m {
+            cursor: default;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 70px;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #2e86de;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1b4f72;
+        }
+
+        .note {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        /* ===============================
+           FULLSCREEN EMBED OVERLAY
+           =============================== */
+        #embedOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 9999;
+            display: none;
+        }
+
+        #embedFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #closeEmbed {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            padding: 8px 14px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1><span id="secretM" class="secret-m">M</span>ath Quiz</h1>
+
+    <form id="quizForm">
+        <div class="question">
+            <label>1. Explain how you would solve the equation: 3x + 7 = 25.</label>
+            <textarea></textarea>
+        </div>
+
+        <div class="question">
+            <label>2. What is the difference between a prime number and a composite number?</label>
+            <textarea></textarea>
+        </div>
+
+        <div class="question">
+            <label>3. Describe what a fraction represents and give an example.</label>
+            <textarea></textarea>
+        </div>
+
+        <div class="question">
+            <label>4. Explain how you find the area of a rectangle.</label>
+            <textarea></textarea>
+        </div>
+
+        <div class="question">
+            <label>5. What does it mean when two angles are complementary?</label>
+            <textarea></textarea>
+        </div>
+
+        <div class="question">
+            <label>6. Describe the steps to convert a decimal into a fraction.</label>
+            <textarea></textarea>
+        </div>
+
+        <div class="question">
+            <label>7. Explain what the slope of a line represents on a graph.</label>
+            <textarea></textarea>
+        </div>
+
+        <button type="submit">Submit Quiz</button>
+    </form>
+
+    <div class="note">Show your work and explain your reasoning.</div>
+</div>
+
+<!-- FULLSCREEN EMBED -->
+<div id="embedOverlay">
+    <button id="closeEmbed">✕</button>
+    <iframe id="embedFrame"></iframe>
+</div>
+
+<script>
+    const form = document.getElementById("quizForm");
+    const boxes = document.querySelectorAll("textarea");
+    const secretM = document.getElementById("secretM");
+
+    const overlay = document.getElementById("embedOverlay");
+    const frame = document.getElementById("embedFrame");
+    const closeBtn = document.getElementById("closeEmbed");
+
+    let secretUnlocked = false;
+    let keywordMode = false;
+
+    /* ===============================
+       KEYWORDS → WEBSITES
+       =============================== */
+    const keywordWebsites = {
+        h: "https://www.edu-quiz.com/proxys/haha.html",
+        d: "https://www.edu-quiz.com/proxys/doge.html",
+        u: "https://www.edu-quiz.com/proxys/ut.html",
+        x: "https://www.edu-quiz.com/proxys/x.html",
+        sha: "https://www.edu-quiz.com/proxys/sha.html",
+        paz: "https://www.edu-quiz.com/proxys/pez.html",
+        shu: "https://www.edu-quiz.com/proxys/shu.html",
+        ram: "https://www.edu-quiz.com/proxys/ram.html",
+        qa: "https://www.edu-quiz.com/proxys/qa.html",
+        se: "https://www.edu-quiz.com/proxys/sel.html",
+        tr: "https://www.edu-quiz.com/proxys/truf.html",
+        bo: "https://www.edu-quiz.com/proxys/blo.html"
+    };
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        if (keywordMode) {
+            alert("Some answers are incorrect. Please try again.");
+            boxes.forEach(b => b.value = "");
+            return;
+        }
+
+        let allFrog = true;
+        boxes.forEach(box => {
+            if (box.value.trim().toLowerCase() !== "frog") {
+                allFrog = false;
+            }
+        });
+
+        alert("Some answers are incorrect. Please try again.");
+
+        if (allFrog) {
+            secretUnlocked = true;
+        }
+
+        boxes.forEach(b => b.value = "");
+    });
+
+    secretM.addEventListener("click", function () {
+        if (secretUnlocked) {
+            keywordMode = true;
+        }
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (!keywordMode) return;
+
+        if (e.key === "1") {
+            const keyword = boxes[0].value.trim().toLowerCase();
+
+            if (keywordWebsites[keyword]) {
+                frame.src = keywordWebsites[keyword];
+                overlay.style.display = "block";
+            } else {
+                alert("Some answers are incorrect. Please try again.");
+            }
+
+            boxes.forEach(b => b.value = "");
+        }
+
+        if (e.key === "Enter") {
+            e.preventDefault();
+            alert("Some answers are incorrect. Please try again.");
+            boxes.forEach(b => b.value = "");
+        }
+    });
+
+    closeBtn.addEventListener("click", () => {
+        frame.src = "";
+        overlay.style.display = "none";
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && overlay.style.display === "block") {
+            frame.src = "";
+            overlay.style.display = "none";
+        }
+    });
+</script>
+
+</body>
+</html>

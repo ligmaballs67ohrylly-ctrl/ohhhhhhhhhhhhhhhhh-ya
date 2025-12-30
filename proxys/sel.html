@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>University Learning Portal</title>
+
+<style>
+/* ===== Global ===== */
+body {
+    margin: 0;
+    background: #f5f7fa;
+    font-family: Georgia, "Times New Roman", serif;
+    color: #222;
+}
+
+/* ===== Header ===== */
+.header {
+    background: #002855;
+    color: white;
+    padding: 14px 30px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* ===== Layout ===== */
+.container {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+}
+
+.portal {
+    background: white;
+    border: 1px solid #cfd6df;
+    width: 360px;
+    padding: 30px;
+}
+
+/* ===== Text ===== */
+h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 14px;
+    color: #444;
+}
+
+/* ===== W Secret ===== */
+#w-secret {
+    pointer-events: none;
+    cursor: default;
+    color: #002855;
+}
+
+/* ===== Inputs ===== */
+input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #aaa;
+}
+
+/* ===== Button ===== */
+button {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    background: #002855;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #001b3a;
+}
+
+button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+/* ===== Footer ===== */
+.footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+}
+
+/* ===== Error Message ===== */
+#errorMsg {
+    color: red;
+    font-size: 13px;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    University Learning Management System
+</div>
+
+<div class="container">
+
+<!-- FAKE LOGIN -->
+<div class="portal" id="fakeGate">
+    <h1>
+        <span id="w-secret">W</span>elcome
+    </h1>
+    <p>Sign in to access course materials and academic resources.</p>
+
+    <input type="text" id="secretInput" placeholder="University ID or Access Code">
+    <button onclick="alert('Incorrect password.')">Sign In</button>
+</div>
+
+<!-- REAL LOGIN -->
+<div class="portal" id="realGate" style="display:none;">
+    <h1>Secure Authentication</h1>
+    <p>This system is restricted to authorized users.</p>
+
+    <input type="password" id="realPass" placeholder="Password">
+    <button id="realBtn" onclick="checkPass()">Continue</button>
+    <p id="errorMsg"></p>
+</div>
+
+</div>
+
+<div class="footer">
+    © 2025 University Name · Privacy · Accessibility · Terms of Use
+</div>
+
+<script>
+const wSecret = document.getElementById("w-secret");
+const secretInput = document.getElementById("secretInput");
+
+let fakeUnlocked = false;
+let attemptsLeft = 3;
+
+/* ZERO KEY activates fake passkey ONLY if input === frog */
+secretInput.addEventListener("keydown", function(e) {
+    if (e.key === "0") {
+        if (secretInput.value.toLowerCase() === "frog") {
+            fakeUnlocked = true;
+            wSecret.style.pointerEvents = "auto";
+            wSecret.style.cursor = "pointer";
+            wSecret.addEventListener("click", openRealLogin);
+        }
+        secretInput.value = "";
+        e.preventDefault();
+    }
+});
+
+/* Press W to open real login ONLY after fake unlock */
+document.addEventListener("keydown", function(e) {
+    if (fakeUnlocked && (e.key === "w" || e.key === "W")) {
+        openRealLogin();
+    }
+});
+
+/* Open real login */
+function openRealLogin() {
+    document.getElementById("fakeGate").style.display = "none";
+    document.getElementById("realGate").style.display = "block";
+}
+
+/* Real password check — 3 tries only */
+function checkPass() {
+    const pass = document.getElementById("realPass").value;
+    const msg = document.getElementById("errorMsg");
+    const btn = document.getElementById("realBtn");
+
+    if (pass === "im not yo bro so get awy") {
+        launchProtectedPage();
+        attemptsLeft = 3; // reset if correct
+        msg.textContent = "";
+    } else {
+        attemptsLeft--;
+
+        if (attemptsLeft > 0) {
+            msg.textContent = `Incorrect password. ${attemptsLeft} attempts remaining.`;
+        } else {
+            msg.textContent = "Too many failed attempts. Access locked.";
+            document.getElementById("realPass").disabled = true;
+            btn.disabled = true;
+        }
+    }
+}
+
+/* Protected content */
+function launchProtectedPage() {
+    const newWin = window.open("about:blank", "_blank");
+
+    const protectedContent = `
+<!DOCTYPE html>
+<html>
+<head>
+<title>Course Resources</title>
+<style>
+body, html {
+    margin:0;
+    height:100%;
+    font-family: Georgia, serif;
+}
+embed {
+    width:100vw;
+    height:100vh;
+    border:none;
+}
+#overlay {
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div id="overlay" onclick="this.style.display='none'">
+    <h1>Click to access course materials</h1>
+</div>
+
+<embed src="https://shadow.localization.ee/">
+
+<script>
+window.addEventListener('beforeunload', function(e) {
+    e.preventDefault();
+    e.returnValue = '';
+});
+<\/script>
+
+</body>
+</html>
+`;
+
+    if (newWin) {
+        newWin.document.write(protectedContent);
+        newWin.document.close();
+    } else {
+        alert("Please allow pop-ups.");
+    }
+}
+</script>
+
+</body>
+</html>
